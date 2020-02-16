@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Population Prediction</title>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script type="text/javascript">
+window.onload = function () {
+
+function getQueryVariable(variable)
+{
+    var query = decodeURI(window.location.search.substring(1));
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+
+    var year = getQueryVariable("year");
+    var state_name = getQueryVariable("state");
+
+    document.getElementById("y").innerText = year;
+    document.getElementById("s").innerText = state_name;
+
+    var state = new Array();
+    state["Northern Territory"] = "NT";
+    state["Queensland"] = "QLD";
+    state["Western Australia"] = "WA";
+    state["South Australia"] = "SA";
+    state["New South Wales"] = "NSW";
+    state["Australian Capital Territory"] = "ACT";
+    state["Victoria"] = "VIC";
+    state["Tasmania"] = "TAS";
+    api = 'http://127.0.0.1:5000/prediction/'+year+'/genders/'+state[state_name]+'?token=ANHwpKF7vMG9u86zmqU0kA'
+    $.ajax({
+        url: api,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(data) {
+            var males = data['results']['MALES']['value'];
+            var females = data['results']['FEMALES']['value'];
+            var pmale = data['results']['MALES']['proportion']*100;
+            pmale = pmale.toFixed(2);
+            var pfemale = data['results']['FEMALES']['proportion']*100;
+            pfemale = pfemale.toFixed(2);
+            var genderchart = new CanvasJS.Chart("chartContainer",
+            {
+                animationEnabled: true,
+                title:{
+                    text: "Sex Ratio"
+                },
+                legend: {
+                    maxWidth: 350,
+                    itemWidth: 120
+                },
+                data: [
+                {
+                    type: "pie",
+                    showInLegend: true,
+                    legendText: "{label}",
+                    toolTipContent: "<b>{label}</b><br>Number: {y}<br>Proportion: {prop}%",
+                    dataPoints: [
+                        { y: males, label: "Male", prop: pmale},
+                        { y: females, label: "Famale", prop: pfemale}
+                    ]
+                }
+                ]
+            });
+            genderchart.render();
+        }
+    });
+
+    var ages = new Array();
+    ages["0-4"] = "";
+    ages["5-9"] = "";
+    ages["10-14"] = "";
+    ages["15-19"] = "";
+    ages["20-24"] = "";
+    ages["25-29"] = "";
+    ages["30-34"] = "";
+    ages["35-39"] = "";
+    ages["40-44"] = "";
+    ages["45-49"] = "";
+    ages["50-54"] = "";
+    ages["55-59"] = "";
+    ages["60-64"] = "";
+    ages["65-69"] = "";
+    ages["70-74"] = "";
+    ages["75-79"] = "";
+    ages["80-84"] = "";
+    ages["85 and over"] = "";
+    var agep = new Array();
+    agep["0-4"] = "";
+    agep["5-9"] = "";
+    agep["10-14"] = "";
+    agep["15-19"] = "";
+    agep["20-24"] = "";
+    agep["25-29"] = "";
+    agep["30-34"] = "";
+    agep["35-39"] = "";
+    agep["40-44"] = "";
+    agep["45-49"] = "";
+    agep["50-54"] = "";
+    agep["55-59"] = "";
+    agep["60-64"] = "";
+    agep["65-69"] = "";
+    agep["70-74"] = "";
+    agep["75-79"] = "";
+    agep["80-84"] = "";
+    agep["85 and over"] = "";
+    api = 'http://127.0.0.1:5000/prediction/'+year+'/ages/'+state[state_name]+'?token=ANHwpKF7vMG9u86zmqU0kA'
+    $.ajax({
+        url: api,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function(data) {
+            for (var item in data['results']) {
+                var num = data['results'][item]['proportion']*100;
+                num = num.toFixed(2);
+                ages[data['results'][item]['title']] = data['results'][item]['value'];
+                agep[data['results'][item]['title']] = num;
+            }
+            var agechart = new CanvasJS.Chart("chartContainer2",
+            {
+                animationEnabled: true,
+                title:{
+                    text: "Age Distribution"
+                },
+                axisX:{
+                    interval: 1,
+                    title: "Age Groups"
+                },
+                axisY:{
+                    title: "Number of People"
+                },
+                data: [
+                {
+                    type: "bar",
+                    legendText: "{label}",
+                    toolTipContent: "<b>{label}</b><br>Number: {y}<br>Proportion: {prop}%",
+                    dataPoints: [
+                    { y: ages["0-4"], label: "0-4", prop: agep["0-4"]},
+                    { y: ages["5-9"], label: "5-9", prop: agep["5-9"]},
+                    { y: ages["10-14"], label: "10-14", prop: agep["10-14"]},
+                    { y: ages["15-19"], label: "15-19", prop: agep["15-19"]},
+                    { y: ages["20-24"], label: "20-24", prop: agep["20-24"]},
+                    { y: ages["25-29"], label: "25-29", prop: agep["25-29"]},
+                    { y: ages["30-34"], label: "30-34", prop: agep["30-34"]},
+                    { y: ages["35-39"], label: "35-39", prop: agep["35-39"]},
+                    { y: ages["40-44"], label: "40-44", prop: agep["40-44"]},
+                    { y: ages["45-49"], label: "45-49", prop: agep["45-49"]},
+                    { y: ages["50-54"], label: "50-54", prop: agep["50-54"]},
+                    { y: ages["55-59"], label: "55-59", prop: agep["55-59"]},
+                    { y: ages["60-64"], label: "60-64", prop: agep["60-64"]},
+                    { y: ages["65-69"], label: "65-69", prop: agep["65-69"]},
+                    { y: ages["70-74"], label: "70-74", prop: agep["70-74"]},
+                    { y: ages["75-79"], label: "75-79", prop: agep["75-79"]},
+                    { y: ages["80-84"], label: "80-84", prop: agep["80-84"]},
+                    { y: ages["85 and over"], label: "85 and over", prop: agep["85 and over"]}
+                    ]
+                },
+                ]
+            });
+            agechart.render();
+
+        }
+    });
+}
+</script>
+<style>
+.button {
+  display: inline-block;
+  background: transparent;
+  border: none;
+  text-align: center;
+  font: italic bold 20px Georgia, serif;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+.button span:after {
+  content: '«';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: -120px;
+  transition: 0.5s;
+}
+.button:hover span {
+  padding-left: 25px;
+}
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+.btn-circle {
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.42;
+  border-radius: 30px;
+  background-color: #FFFFFF;
+  color:#8b8ea0
+}
+</style>
+</head>
+
+<body>
+<div class="header">
+    <div class="back">
+        <button class="button" onclick ="window.check(this)" style="margin: 0px 0px 0px 0px;"><span>GO BACK</span></button>
+    </div>
+	<div class="title">
+    	<h1 style="margin-left: 560px">Population Prediction</h1>
+    </div>
+    <div style="margin-left: 696px">
+        <button class="btn-circle" value="home" onclick ="window.check(this)">Home Page</button>
+    </div>
+</div>
+<div class="title">
+    <h3><span id='y'></span> <span id='s'></span> Details</h3>
+</div>
+<div id="chartContainer" style="height: 300px; width: 100%; margin: 20px 0px 70px;">
+</div>
+<div id="chartContainer2" style="height: 300px; width: 100%; margin: 0px 0px 50px;">
+</div>
+
+<div class="footer">
+    <p>COMP9321 Assignment 3 Group No Story</p>
+</div>
+
+<script type="text/javascript">
+function getQueryVariable(variable)
+{
+    var query = decodeURI(window.location.search.substring(1));
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+function check(obj)
+{
+    if (obj.value == 'home') {
+        url = 'prediction.html';
+        window.location.href = url;
+        window.event.returnValue=false
+    }
+    else {
+        var year = getQueryVariable("year");
+        var state_name = getQueryVariable("state");
+        url = 'state.html?year='+year;
+        window.location.href = url;
+        window.event.returnValue=false;
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!-- python -m SimpleHTTPServer
+http://localhost:8000/prediction.html -->
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Population Prediction</title>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+body
+{
+	background: url(images/b1.jpg) no-repeat fixed;
+	background-size: cover;
+}
+.title h1
+{
+	padding: 150px 0px 47px;
+	font-family: 'Pacifico', cursive;
+	color: #fff;
+	margin-top: 0px;
+	font-size: 50px;
+	font-weight: 20px;
+}
+.footer
+{
+	position: fixed;
+}
+</style>
+</head>
+
+<body>
+<div class="home">
+	<div class="title">
+    	<h1 style="text-align: center">Population Prediction</h1>
+    </div>
+    <div class="desc">
+	    <p>This system will predict population in Australia.
+	    </p>
+	</div>
+    <div class="predictform">
+        	<div class="input-group mb-3">
+		  		<div class="input-group-prepend">
+		    		<span class="input-group-text" id="basic-addon1">Input year</span>
+		  		</div>
+		  		<input type="text" id="year" class="form-control" placeholder="year" aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+			<button type="button" id="predict" class="btn btn-danger" onclick="check()">Predict</button>
+    </div>
+</div>
+<div class="footer">
+    <p>COMP9321 Assignment 3 Group No Story</p>
+</div>
+
+<script type="text/javascript">
+    function check() {
+        if (year.value.length == "" || year.value == null) {
+            alert("Please input year.");
+        }
+        else if (year.value < 2018 || year.value > 3018) {
+            alert("Range 2019-3018, please input again.")
+        }
+        else {
+            url = 'state.html?year='+year.value;
+   			window.location.href = url;
+		    window.event.returnValue=false;
+        }
+    }
+</script>
+</body>
+</html>
